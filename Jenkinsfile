@@ -2,33 +2,33 @@ pipeline {
     agent any
 
     environment {
-        IMAGE_NAME = "nodejs-demo"
-        IMAGE_TAG = "latest"
+        IMAGE_NAME = "node-demo"
+        CONTAINER_NAME = "node-demo"
     }
 
     stages {
 
         stage('Checkout') {
             steps {
-                git url: 'https://github.com/clan-killer/Virendra-test'
+                checkout scm
             }
         }
 
-        stage('Build Docker Image') {
+        stage('Build Image') {
             steps {
-                sh 'docker build -t $IMAGE_NAME:$IMAGE_TAG .'
+                sh 'docker build -t $IMAGE_NAME:latest .'
             }
         }
 
-        stage('Run Container') {
+        stage('Deploy') {
             steps {
                 sh '''
-                    docker rm -f node-demo || true
+                    docker rm -f $CONTAINER_NAME || true
 
                     docker run -d \
-                    --name node-demo \
-                    -p 3000:3000 \
-                    $IMAGE_NAME:$IMAGE_TAG
+                      --name $CONTAINER_NAME \
+                      -p 3000:3000 \
+                      $IMAGE_NAME:latest
                 '''
             }
         }
@@ -37,15 +37,6 @@ pipeline {
             steps {
                 sh 'curl -f http://localhost:3000'
             }
-        }
-    }
-
-    post {
-        success {
-            echo 'Deployment Successful'
-        }
-        failure {
-            echo 'Pipeline Failed'
         }
     }
 }

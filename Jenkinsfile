@@ -16,7 +16,7 @@ pipeline {
 
         stage('Build Image') {
             steps {
-                sh 'docker build -t $IMAGE_NAME:latest .'
+                sh 'docker build -t $IMAGE_NAME:${BUILD_NUMBER} .'
             }
         }
 
@@ -28,7 +28,7 @@ pipeline {
                     docker run -d \
                       --name $CONTAINER_NAME \
                       -p 3000:3000 \
-                      $IMAGE_NAME:latest
+                      $IMAGE_NAME:${BUILD_NUMBER}
                 '''
             }
         }

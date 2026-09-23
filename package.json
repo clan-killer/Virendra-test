@@ -4,9 +4,13 @@
   "description": "Demo Node.js app for Docker and Jenkins",
   "main": "app.js",
   "scripts": {
-    "start": "node app.js"
+    "start": "node app.js",
+    "lint": "eslint ."
   },
   "dependencies": {
     "express": "^4.21.0"
+  },
+  "devDependencies": {
+    "eslint": "^10.11.0"
   }
 }

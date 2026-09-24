@@ -3,6 +3,10 @@
 pipeline {
     agent any
 
+    tools {
+        nodejs 'Node24'
+    }
+
     environment {
         IMAGE_NAME = "node-demo"
         CONTAINER_NAME = "node-demo"
@@ -15,20 +19,7 @@ pipeline {
                 checkout scm
             }
         }
-        stage('Debug Environment') {
-            steps {
-                sh '''
-                    whoami
-                    echo "PATH=$PATH"
 
-                    which node || true
-                    which npm || true
-
-                    node -v || true
-                    npm -v || true
-                '''
-                }
-        }
         stage('Code Quality') {
             steps {
                 nodeLint()

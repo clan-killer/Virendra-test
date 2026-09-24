@@ -15,7 +15,20 @@ pipeline {
                 checkout scm
             }
         }
+        stage('Debug Environment') {
+            steps {
+                sh '''
+                    whoami
+                    echo "PATH=$PATH"
 
+                    which node || true
+                    which npm || true
+
+                    node -v || true
+                    npm -v || true
+                '''
+                }
+        }
         stage('Code Quality') {
             steps {
                 nodeLint()

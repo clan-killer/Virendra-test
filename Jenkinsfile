@@ -35,7 +35,7 @@ pipeline {
 
         stage('Quality Gate & Summary') {
             steps {
-                sonarSummary(SONAR_PROJECT)
+                sonarSummary(env.SONAR_PROJECT)
             }
         }
 

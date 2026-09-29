@@ -20,7 +20,7 @@ pipeline {
             }
         }
 
-        stage('Code Quality') {
+        stage('Lint') {
             steps {
                 nodeLint()
             }

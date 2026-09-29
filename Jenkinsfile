@@ -25,6 +25,19 @@ pipeline {
                 nodeLint()
             }
         }
+        stage('SonarQube Scan') {
+            steps {
+                sonarScan()
+            }
+        }
+
+        stage('Quality Gate') {
+            steps {
+                timeout(time: 10, unit: 'MINUTES') {
+                    waitForQualityGate abortPipeline: true
+                }
+            }
+        }
 
         stage('Build Image') {
             steps {

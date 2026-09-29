@@ -10,6 +10,7 @@ pipeline {
     environment {
         IMAGE_NAME = "node-demo"
         CONTAINER_NAME = "node-demo"
+        SONAR_PROJECT = "nodejs-demo"
     }
 
     stages {
@@ -25,9 +26,16 @@ pipeline {
                 nodeLint()
             }
         }
+
         stage('SonarQube Scan') {
             steps {
                 sonarScan()
+            }
+        }
+
+        stage('Quality Gate & Summary') {
+            steps {
+                sonarSummary(SONAR_PROJECT)
             }
         }
 

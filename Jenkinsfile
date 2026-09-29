@@ -10,6 +10,7 @@ pipeline {
     environment {
         IMAGE_NAME = "node-demo"
         CONTAINER_NAME = "node-demo"
+        SONAR_URL = "http://localhost:9000"
         SONAR_PROJECT = "nodejs-demo"
     }
 
@@ -35,7 +36,7 @@ pipeline {
 
         stage('Quality Gate & Summary') {
             steps {
-                sonarSummary(env.SONAR_PROJECT)
+                sonarSummary(env.SONAR_URL, env.SONAR_PROJECT)
             }
         }
 

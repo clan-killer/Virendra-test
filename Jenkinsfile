@@ -66,7 +66,7 @@ pipeline {
                 script {
                     sonarScan(
                         sonarUrl  : SONAR_URL,
-                        sonarToken: SONAR_TOKEN,u
+                        sonarToken: SONAR_TOKEN,
                         projectKey: SONAR_PROJECT
                         )
                 }

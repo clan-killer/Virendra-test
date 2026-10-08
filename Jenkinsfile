@@ -16,7 +16,7 @@ pipeline {
 
 
     stages {
-        
+
         stage('Detection Test') {
             steps {
                 script {
@@ -32,9 +32,11 @@ pipeline {
             }
         }
 
-        stage('Lint') {
+        stage('Code Quality') {
             steps {
-                nodeLint()
+                script {
+                    codeQuality()
+                }
             }
         }
 

@@ -47,31 +47,31 @@ pipeline {
             }
         }
 
-        stage('Sonar Test') {
-        steps {
-            script {
-                def scannerHome = tool 'SonarScanner'
-
-                echo "Scanner Path = ${scannerHome}"
-
-                sh """
-                    ${scannerHome}/bin/sonar-scanner --version
-                """
-            }
-        }
-        }
-
-        // stage('SonarQube') {
+        // stage('Sonar Test') {
         //     steps {
         //         script {
-        //             sonarScan(
-        //                 sonarUrl  : SONAR_URL,
-        //                 sonarToken: SONAR_TOKEN,u
-        //                 projectKey: SONAR_PROJECT
-        //                 )
+        //             def scannerHome = tool 'SonarScanner'
+
+        //             echo "Scanner Path = ${scannerHome}"
+
+        //             sh """
+        //                 ${scannerHome}/bin/sonar-scanner --version
+        //             """
         //         }
         //     }
         // }
+
+        stage('SonarQube') {
+            steps {
+                script {
+                    sonarScan(
+                        sonarUrl  : SONAR_URL,
+                        sonarToken: SONAR_TOKEN,u
+                        projectKey: SONAR_PROJECT
+                        )
+                }
+            }
+        }
 
         stage('Quality Gate & Summary') {
             steps {

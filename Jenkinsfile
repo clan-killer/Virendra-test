@@ -8,10 +8,17 @@ pipeline {
     }
 
     environment {
-        IMAGE_NAME = "node-demo"
-        CONTAINER_NAME = "node-demo"
+
+        APP_NAME        = "nodejs-demo"
+        IMAGE_NAME      = "nodejs-demo"
+        APP_PORT        = "3000"
+
         SONAR_URL = "http://localhost:9000"
         SONAR_PROJECT = "nodejs-demo"
+        SONAR_TOKEN = "sqp_0a8d4e67986803a7d8316a4f77180e413322e938"
+
+        ENABLE_PUSH     = "true"
+        ENABLE_DEPLOY   = "false"
     }
 
 
@@ -40,9 +47,15 @@ pipeline {
             }
         }
 
-        stage('SonarQube Scan') {
+        stage('SonarQube') {
             steps {
-                sonarScan()
+                script {
+                    sonarScan(
+                        sonarUrl  : SONAR_URL,
+                        sonarToken: SONAR_TOKEN,
+                        projectKey: SONAR_PROJECT
+                        )
+                }
             }
         }
 

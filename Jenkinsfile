@@ -16,6 +16,7 @@ pipeline {
 
 
     stages {
+        
         stage('Detection Test') {
             steps {
                 script {
@@ -24,9 +25,6 @@ pipeline {
                     }
             }
         }
-    }
-    
-    stages {
 
         stage('Checkout') {
             steps {

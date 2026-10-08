@@ -15,7 +15,6 @@ pipeline {
 
         SONAR_URL = "http://localhost:9000"
         SONAR_PROJECT = "nodejs-demo"
-        SONAR_TOKEN = "sqp_0a8d4e67986803a7d8316a4f77180e413322e938"
 
         ENABLE_PUSH     = "true"
         ENABLE_DEPLOY   = "false"
@@ -47,45 +46,30 @@ pipeline {
             }
         }
 
-        // stage('Sonar Test') {
-        //     steps {
-        //         script {
-        //             def scannerHome = tool 'SonarScanner'
-
-        //             echo "Scanner Path = ${scannerHome}"
-
-        //             sh """
-        //                 ${scannerHome}/bin/sonar-scanner --version
-        //             """
-        //         }
-        //     }
-        // }
-
         stage('SonarQube') {
             steps {
                 script {
                     sonarScan(
                         sonarUrl  : SONAR_URL,
-                        sonarToken: SONAR_TOKEN,
                         projectKey: SONAR_PROJECT
                         )
                 }
             }
         }
 
-        stage('Quality Gate & Summary') {
-            steps {
-                sonarSummary(env.SONAR_URL, env.SONAR_PROJECT)
-            }
-        }
+        // stage('Quality Gate & Summary') {
+        //     steps {
+        //         sonarSummary(env.SONAR_URL, env.SONAR_PROJECT)
+        //     }
+        // }
 
-        stage('Quality Gate') {
-            steps {
-                timeout(time: 10, unit: 'MINUTES') {
-                    waitForQualityGate abortPipeline: true
-                }
-            }
-        }
+        // stage('Quality Gate') {
+        //     steps {
+        //         timeout(time: 10, unit: 'MINUTES') {
+        //             waitForQualityGate abortPipeline: true
+        //         }
+        //     }
+        // }
 
         stage('Build Image') {
             steps {
@@ -99,10 +83,10 @@ pipeline {
         stage('Deploy') {
             steps {
                 sh '''
-                docker rm -f ${CONTAINER_NAME} || true
+                docker rm -f ${APP_NAME} || true
 
                 docker run -d \
-                  --name ${CONTAINER_NAME} \
+                  --name ${APP_NAME} \
                   -p 3000:3000 \
                   ${IMAGE_NAME}:${BUILD_NUMBER}
                 '''

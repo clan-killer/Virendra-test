@@ -13,7 +13,6 @@ pipeline {
         IMAGE_NAME      = "nodejs-demo"
         APP_PORT        = "3000"
 
-        SONAR_URL = "http://localhost:9000"
         SONAR_PROJECT = "nodejs-demo"
 
         ENABLE_PUSH     = "true"
@@ -50,7 +49,6 @@ pipeline {
             steps {
                 script {
                     sonarScan(
-                        sonarUrl  : SONAR_URL,
                         projectKey: SONAR_PROJECT
                         )
                 }

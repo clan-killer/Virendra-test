@@ -14,6 +14,18 @@ pipeline {
         SONAR_PROJECT = "nodejs-demo"
     }
 
+
+    stages {
+        stage('Detection Test') {
+            steps {
+                script {
+                    def projectType = detectProject()
+                    echo "Detected = ${projectType}"
+                    }
+            }
+        }
+    }
+    
     stages {
 
         stage('Checkout') {

@@ -55,6 +55,18 @@ pipeline {
             }
         }
 
+        stage('Trivy Scan') {
+            steps {
+                script {
+                    trivyResult = trivyScan(
+                        imageName : IMAGE_NAME,
+                        imageTag  : BUILD_NUMBER
+                    )
+                    echo "Trivy Result = ${trivyResult}"
+                }
+            }
+        }
+
         stage('Sonar Critical Approval') {
 
             when {

@@ -55,19 +55,47 @@ pipeline {
             }
         }
 
-        // stage('Quality Gate & Summary') {
-        //     steps {
-        //         sonarSummary(env.SONAR_URL, env.SONAR_PROJECT)
-        //     }
-        // }
+        stage('Sonar Critical Approval') {
 
-        // stage('Quality Gate') {
-        //     steps {
-        //         timeout(time: 10, unit: 'MINUTES') {
-        //             waitForQualityGate abortPipeline: true
-        //         }
-        //     }
-        // }
+            when {
+                expression {
+                    sonarResult?.critical > 0
+                }
+            }
+
+            steps {
+                script {
+
+                    try {
+
+                        timeout(time: 60, unit: 'MINUTES') {
+
+                            input(
+                                id: 'SonarCriticalApproval',
+                                message: """
+        Critical SonarQube Issues Found
+
+        Project : ${SONAR_PROJECT}
+
+        Critical Findings : ${sonarResult.critical}
+
+        Approve continuation?
+
+        Timeout = FAIL
+        Reject  = FAIL
+        Approve = Continue
+        """,
+                                ok: 'Approve'
+                            )
+                        }
+
+                    } catch (err) {
+
+                        error("Sonar approval not received within 60 minutes.")
+                    }
+                }
+            }
+}
 
         stage('Build Image') {
             steps {

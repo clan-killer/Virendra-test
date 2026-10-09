@@ -20,7 +20,7 @@ pipeline {
         SONAR_PROJECT  = "nodejs-demo"
 
         ENABLE_PUSH    = "true"
-        ENABLE_DEPLOY  = "false"
+        ENABLE_DEPLOY  = "true"
     }
 
     stages {

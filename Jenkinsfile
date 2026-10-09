@@ -55,6 +55,15 @@ pipeline {
             }
         }
 
+        stage('Build Image') {
+            steps {
+                sh '''
+                docker build -t ${IMAGE_NAME}:${BUILD_NUMBER} .
+                docker tag ${IMAGE_NAME}:${BUILD_NUMBER} ${IMAGE_NAME}:latest
+                '''
+            }
+        }
+
         stage('Trivy Scan') {
             steps {
                 script {
@@ -106,15 +115,6 @@ pipeline {
                         error("Sonar approval not received within 60 minutes.")
                     }
                 }
-            }
-}
-
-        stage('Build Image') {
-            steps {
-                sh '''
-                docker build -t ${IMAGE_NAME}:${BUILD_NUMBER} .
-                docker tag ${IMAGE_NAME}:${BUILD_NUMBER} ${IMAGE_NAME}:latest
-                '''
             }
         }
 

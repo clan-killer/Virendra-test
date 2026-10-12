@@ -4,7 +4,7 @@ import groovy.json.JsonOutput
 
 def sonarResult = [:]
 def trivyResult = [:]
-def failedStage = "N/A"
+def lastStage = "N/A"
 
 pipeline {
 
@@ -85,6 +85,7 @@ Detected Type : ${projectType}
                     rsync -av \
                         --exclude=.git \
                         --exclude=node_modules \
+                        --exclude=.scannerwork \
                         --exclude=builds \
                         ./ \
                         builds/Build_${BUILD_NUMBER}/source/

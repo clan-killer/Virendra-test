@@ -179,7 +179,7 @@ Detected Type : ${projectType}
 
                     failedStage = env.STAGE_NAME
 
-                    securityGate(
+                    gateResult = securityGate(
                         eslintResult,
                         sonarResult,
                         trivyResult

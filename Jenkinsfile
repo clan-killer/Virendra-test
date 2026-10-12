@@ -232,7 +232,7 @@ Detected Type : ${projectType}
                 }
 
                 sh '''
-                    sleep 10
+                    sleep 60
 
                     curl -I \
                         http://localhost:${APP_PORT}

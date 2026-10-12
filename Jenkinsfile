@@ -110,7 +110,7 @@ Detected Type : ${projectType}
 
                     failedStage = env.STAGE_NAME
 
-                    eslintResult = codeQuality()
+                    eslintResult = nodeLint()
 
                     echo "ESLint Result = ${eslintResult}"
                 }

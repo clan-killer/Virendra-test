@@ -127,7 +127,7 @@ Detected Type : ${projectType}
                     failedStage = env.STAGE_NAME
 
                     sonarResult = sonarScan(
-                        projectKey: SONAR_PROJECT
+                        projectKey: SONAR_PROJECT,
                         credentialsId : SONAR_CRED_ID
                     )
 

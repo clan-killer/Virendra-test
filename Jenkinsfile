@@ -26,11 +26,11 @@ pipeline {
 
     environment {
 
-        APP_NAME      = "nodejs-demo"
-        IMAGE_NAME    = "nodejs-demo"
+        APP_NAME      = "merchant-portal-web"
+        IMAGE_NAME    = "merchant-portal-web"
         APP_PORT      = "3000"
 
-        SONAR_PROJECT = "nodejs-demo"
+        SONAR_PROJECT = "merchant-portal-web"
 
         ENABLE_PUSH   = "true"
         ENABLE_DEPLOY = "true"

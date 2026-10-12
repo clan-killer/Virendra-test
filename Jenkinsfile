@@ -2,6 +2,7 @@
 
 import groovy.json.JsonOutput
 
+def eslintResult = [:]
 def sonarResult = [:]
 def trivyResult = [:]
 def lastStage = "N/A"
@@ -106,7 +107,9 @@ Detected Type : ${projectType}
 
                     failedStage = env.STAGE_NAME
 
-                    codeQuality()
+                    eslintResult = codeQuality()
+                    echo "ESLint Result = ${eslintResult}"
+
                 }
             }
         }
@@ -174,6 +177,7 @@ Detected Type : ${projectType}
                     failedStage = env.STAGE_NAME
 
                     securityGate(
+                        eslintResult,
                         sonarResult,
                         trivyResult
                     )

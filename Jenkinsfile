@@ -28,7 +28,7 @@ pipeline {
 
         APP_NAME      = "merchant-portal-web"
         IMAGE_NAME    = "merchant-portal-web"
-        APP_PORT      = "3000"
+        APP_PORT      = "5000"
 
         SONAR_PROJECT = "merchant-portal-web"
         SONAR_CRED_ID    = "sonar-merchant-token"

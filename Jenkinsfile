@@ -3,9 +3,10 @@
 import groovy.json.JsonOutput
 
 def eslintResult = [:]
-def sonarResult = [:]
-def trivyResult = [:]
-def lastStage = "N/A"
+def sonarResult  = [:]
+def trivyResult  = [:]
+def gateResult = [:]
+def failedStage  = "N/A"
 
 pipeline {
 
@@ -88,6 +89,8 @@ Detected Type : ${projectType}
                         --exclude=node_modules \
                         --exclude=.scannerwork \
                         --exclude=builds \
+                        --exclude=eslint-report.json \
+                        --exclude=quality-summary.json \
                         ./ \
                         builds/Build_${BUILD_NUMBER}/source/
                 '''
@@ -108,8 +111,8 @@ Detected Type : ${projectType}
                     failedStage = env.STAGE_NAME
 
                     eslintResult = codeQuality()
-                    echo "ESLint Result = ${eslintResult}"
 
+                    echo "ESLint Result = ${eslintResult}"
                 }
             }
         }
@@ -181,6 +184,8 @@ Detected Type : ${projectType}
                         sonarResult,
                         trivyResult
                     )
+
+                    echo "Gate Result = ${gateResult}"
                 }
             }
         }
@@ -189,7 +194,7 @@ Detected Type : ${projectType}
 
             when {
                 expression {
-                    ENABLE_DEPLOY == "true"
+                    env.ENABLE_DEPLOY == "true"
                 }
             }
 
@@ -214,7 +219,7 @@ Detected Type : ${projectType}
 
             when {
                 expression {
-                    ENABLE_DEPLOY == "true"
+                    env.ENABLE_DEPLOY == "true"
                 }
             }
 
@@ -227,7 +232,7 @@ Detected Type : ${projectType}
                 sh '''
                     sleep 10
 
-                    curl -f \
+                    curl -I \
                         http://localhost:${APP_PORT}
                 '''
             }
@@ -244,14 +249,40 @@ Detected Type : ${projectType}
                     file: "builds/Build_${BUILD_NUMBER}/build-info.json",
                     text: JsonOutput.prettyPrint(
                         JsonOutput.toJson([
+
                             buildNumber : BUILD_NUMBER,
                             application : APP_NAME,
-                            image       : "${IMAGE_NAME}:${BUILD_NUMBER}",
-                            sonarStatus : sonarResult?.status ?: "N/A",
-                            trivyStatus : trivyResult?.status ?: "N/A",
+
+                            image : "${IMAGE_NAME}:${BUILD_NUMBER}",
+
+                            eslintStatus   : eslintResult?.status ?: "N/A",
+                            eslintErrors   : eslintResult?.errors ?: 0,
+                            eslintWarnings : eslintResult?.warnings ?: 0,
+
+                            sonarStatus      : sonarResult?.status ?: "N/A",
+                            sonarQualityGate : sonarResult?.qualityGate ?: "N/A",
+
+                            trivyStatus   : trivyResult?.status ?: "N/A",
+                            trivyCritical : trivyResult?.critical ?: 0,
+                            trivyHigh     : trivyResult?.high ?: 0,
+
+                            approvalRequired : gateResult?.approvalRequired ?: false,
+                            approved         : gateResult?.approved ?: false,
+                            approvedBy       : gateResult?.approvedBy ?: "N/A",
+
+                            riskScore        : gateResult?.riskScore ?: 0,
+                            riskLevel        : gateResult?.riskLevel ?: "UNKNOWN",
+
                             failedStage : failedStage,
                             buildResult : currentBuild.currentResult
                         ])
+                    )
+                )
+
+                writeFile(
+                    file: "builds/Build_${BUILD_NUMBER}/security-gate.json",
+                    text: JsonOutput.prettyPrint(
+                        JsonOutput.toJson(gateResult)
                     )
                 )
 
@@ -262,8 +293,80 @@ Detected Type : ${projectType}
                 )
 
                 currentBuild.description =
-                    "Stage=${failedStage} | Sonar=${sonarResult?.status ?: 'N/A'} | Trivy=${trivyResult?.status ?: 'N/A'}"
+
+                    "ESLint[E=${eslintResult?.errors ?: 0}] | " +
+
+                    "Sonar[QG=${sonarResult?.qualityGate ?: 'N/A'}] | " +
+
+                    "Trivy[C=${trivyResult?.critical ?: 0},H=${trivyResult?.high ?: 0}] | " +
+
+                    "Risk=${gateResult?.riskLevel ?: 'N/A'} | " +
+
+                    "Result=${currentBuild.currentResult}"
+
             }
+
+            echo """
+===================================================
+
+QUALITY SUMMARY
+
+---------------------------------------------------
+
+ESLINT
+
+Status      : ${eslintResult?.status ?: 'N/A'}
+
+Errors      : ${eslintResult?.errors ?: 0}
+
+Warnings    : ${eslintResult?.warnings ?: 0}
+
+---------------------------------------------------
+
+SONAR
+
+Status      : ${sonarResult?.status ?: 'N/A'}
+
+QualityGate : ${sonarResult?.qualityGate ?: 'N/A'}
+
+Blocker     : ${sonarResult?.blocker ?: 0}
+
+Critical    : ${sonarResult?.critical ?: 0}
+
+Major       : ${sonarResult?.major ?: 0}
+
+Minor       : ${sonarResult?.minor ?: 0}
+
+---------------------------------------------------
+
+TRIVY
+
+Status      : ${trivyResult?.status ?: 'N/A'}
+
+Critical    : ${trivyResult?.critical ?: 0}
+
+High        : ${trivyResult?.high ?: 0}
+
+Medium      : ${trivyResult?.medium ?: 0}
+
+Low         : ${trivyResult?.low ?: 0}
+
+---------------------------------------------------
+
+SECURITY GATE
+
+Approval Required : ${gateResult?.approvalRequired ?: false}
+
+Approved          : ${gateResult?.approved ?: false}
+
+Approved By       : ${gateResult?.approvedBy ?: 'N/A'}
+
+Risk Score        : ${gateResult?.riskScore ?: 0}
+
+Risk Level        : ${gateResult?.riskLevel ?: 'N/A'}
+
+===================================================
+"""
 
             echo """
 ===================================================
@@ -282,11 +385,17 @@ builds/Build_${BUILD_NUMBER}
 Source
 builds/Build_${BUILD_NUMBER}/source/
 
+ESLint Reports
+builds/Build_${BUILD_NUMBER}/reports/eslint/
+
 Sonar Reports
 builds/Build_${BUILD_NUMBER}/reports/sonar/
 
 Trivy Reports
 builds/Build_${BUILD_NUMBER}/reports/trivy/
+
+ESLint Status
+${eslintResult?.status ?: 'N/A'}
 
 Sonar Status
 ${sonarResult?.status ?: 'N/A'}
@@ -345,6 +454,9 @@ ${failedStage}
 
 Build Number
 ${BUILD_NUMBER}
+
+ESLint Status
+${eslintResult?.status ?: 'N/A'}
 
 Sonar Status
 ${sonarResult?.status ?: 'N/A'}

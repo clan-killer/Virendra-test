@@ -31,6 +31,7 @@ pipeline {
         APP_PORT      = "3000"
 
         SONAR_PROJECT = "merchant-portal-web"
+        SONAR_CRED_ID    = "sonar-merchant-token"
 
         ENABLE_PUSH   = "true"
         ENABLE_DEPLOY = "true"
@@ -127,6 +128,7 @@ Detected Type : ${projectType}
 
                     sonarResult = sonarScan(
                         projectKey: SONAR_PROJECT
+                        credentialsId : SONAR_CRED_ID
                     )
 
                     echo "Sonar Result = ${sonarResult}"

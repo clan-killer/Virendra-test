@@ -31,8 +31,8 @@ pipeline {
         APP_PORT  = '5173'
  
         // SonarQube configuration
-        SONAR_URL = 'https://sonarqube.example.com'
-        SONAR_SERVER_NAME = 'SonarQube-Production'
+        SONAR_URL = 'http://localhost:9000'
+        SONAR_SERVER_NAME = 'SonarQube-DEV'
         SONAR_SCANNER_TOOL = 'SonarScanner'
         SONAR_PROJECT = 'merchant-portal-web'
  

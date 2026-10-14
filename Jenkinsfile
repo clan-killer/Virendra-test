@@ -32,7 +32,7 @@ pipeline {
  
         // SonarQube configuration
         SONAR_URL = 'http://localhost:9000'
-        SONAR_SERVER_NAME = 'SonarQube-DEV'
+        SONAR_SERVER_NAME = 'SonarQube'
         SONAR_SCANNER_TOOL = 'SonarScanner'
         SONAR_PROJECT = 'merchant-portal-web'
  

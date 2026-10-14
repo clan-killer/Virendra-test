@@ -31,7 +31,7 @@ pipeline {
         APP_PORT      = "5173"
 
         SONAR_PROJECT = "merchant-portal-web"
-        SONAR_CRED_ID    = "sonar-merchant-token"
+        SONAR_CRED_ID    = "sonar-token"
 
         ENABLE_PUSH   = "true"
         ENABLE_DEPLOY = "true"
